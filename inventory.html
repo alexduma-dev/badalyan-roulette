@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инвентарь — Рулетка Бадаляна</title>
+    <link rel="stylesheet" href="styles.css?v=5">
+    <!-- Google Fonts for cartoonish Brawl Stars feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        
+        <!-- HEADER & NAVIGATION -->
+        <header class="game-header">
+            <h1 class="main-title">РУЛЕТКА БАДАЛЯНА</h1>
+            <p class="subtitle">Легендарный RNG-симулятор трусов бабушки Рафаэля</p>
+            
+            <nav class="game-nav">
+                <a href="index.html" class="nav-link">🎰 РУЛЕТКА</a>
+                <a href="inventory.html" class="nav-link active">🎒 ИНВЕНТАРЬ</a>
+            </nav>
+            
+            <div class="header-stats">
+                <div class="coins-display">
+                    <span class="coin-icon">🪙</span>
+                    <span id="coins-count">100</span>
+                </div>
+                
+                <!-- Autoclicker Panel -->
+                <div class="clicker-panel">
+                    <button id="autoclicker-btn" class="btn btn-clicker">
+                        <span class="btn-text">ДОБЫТЬ МОНЕТЫ (+5 🪙)</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- INVENTORY SECTION -->
+        <section class="inventory-section">
+            <div class="inventory-header">
+                <h2>Ваш Инвентарь</h2>
+                <div class="progress-container">
+                    <span class="progress-label">Собрано трусов: <strong id="collected-count">0</strong> / 14</span>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="inventory-progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="inventory-grid" id="inventory-grid">
+                <!-- Javascript will render 14 cards here dynamically -->
+            </div>
+        </section>
+
+        <!-- SOUND TOGGLE (MUTE/UNMUTE) -->
+        <div class="sound-toggle-container">
+            <button id="sound-toggle-btn" class="sound-btn">
+                🔊 Включить Звук (Использует синтезатор)
+            </button>
+        </div>
+
+        <footer class="game-footer">
+            <p>© 2026 Badalyan's Grandma RNG. Все права вонюче защищены.</p>
+        </footer>
+
+    </div>
+
+    <!-- ZOOM CARD OVERLAY -->
+    <div id="zoom-overlay" class="overlay hidden">
+        <div class="zoom-card-container">
+            <div id="zoomed-card-wrapper" class="zoomed-card-wrapper">
+                <!-- Zooms card in here -->
+            </div>
+            <button id="zoom-close-btn" class="btn btn-claim">ЗАКРЫТЬ</button>
+        </div>
+    </div>
+
+    <script src="app.js?v=6"></script>
+</body>
+</html>

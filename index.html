@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рулетка Бадаляна — RNG Вонючих Трусов Бабушки Рафаэля</title>
+    <link rel="stylesheet" href="styles.css?v=5">
+    <!-- Google Fonts for cartoonish Brawl Stars feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        
+        <!-- HEADER & NAVIGATION -->
+        <header class="game-header">
+            <h1 class="main-title">РУЛЕТКА БАДАЛЯНА</h1>
+            <p class="subtitle">Легендарный RNG-симулятор трусов бабушки Рафаэля</p>
+            
+            <nav class="game-nav">
+                <a href="index.html" class="nav-link active">🎰 РУЛЕТКА</a>
+                <a href="inventory.html" class="nav-link">🎒 ИНВЕНТАРЬ</a>
+            </nav>
+            
+            <div class="header-stats">
+                <div class="coins-display">
+                    <span class="coin-icon">🪙</span>
+                    <span id="coins-count">100</span>
+                </div>
+                
+                <!-- Autoclicker Panel -->
+                <div class="clicker-panel">
+                    <button id="autoclicker-btn" class="btn btn-clicker">
+                        <span class="btn-text">ДОБЫТЬ МОНЕТЫ (+5 🪙)</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ROULETTE / GACHA BOXES -->
+        <main class="gacha-section">
+            <div class="chests-container">
+                
+                <!-- Ordinary Box (CSS cardboard-box) -->
+                <div class="chest-card" id="ordinary-chest-card">
+                    <div class="chest-image-wrapper">
+                        <div class="cardboard-box normal-box">
+                            <div class="box-tape"></div>
+                            <div class="box-label">📦</div>
+                        </div>
+                    </div>
+                    <h2 class="chest-title">Обычная Коробка</h2>
+                    <button id="roll-ordinary-btn" class="btn btn-roll btn-ordinary">
+                        <span class="btn-price-text">ОТКРЫТЬ за 10 🪙</span>
+                    </button>
+                </div>
+
+                <!-- Lucky Box (CSS cardboard-box green/clover) -->
+                <div class="chest-card" id="lucky-chest-card">
+                    <div class="chest-image-wrapper lucky-bg">
+                        <div class="cardboard-box lucky-box">
+                            <div class="box-tape"></div>
+                            <div class="box-label">🍀</div>
+                        </div>
+                    </div>
+                    <h2 class="chest-title">Удачная Коробка</h2>
+                    <button id="roll-lucky-btn" class="btn btn-roll btn-lucky">
+                        <span class="btn-price-text">ОТКРЫТЬ за 50 🪙</span>
+                    </button>
+                </div>
+                
+            </div>
+
+            <!-- Drop Rates Accordion -->
+            <div class="accordion-container">
+                <button class="accordion-trigger" id="rates-accordion-btn">
+                    <span>Шансы Выпадения Карточек</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="accordion-content" id="rates-accordion-content">
+                    <div class="rates-table-wrapper">
+                        <table class="rates-table">
+                            <thead>
+                                <tr>
+                                    <th>Редкость</th>
+                                    <th>Цвет карты</th>
+                                    <th>Шанс (Обычный)</th>
+                                    <th>Шанс (Удачный)</th>
+                                    <th>Дубликат</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="rate-rare">
+                                    <td>Редкий</td>
+                                    <td><span class="badge rare-badge">Зеленый</span></td>
+                                    <td>50%</td>
+                                    <td>15%</td>
+                                    <td>+2 🪙</td>
+                                </tr>
+                                <tr class="rate-super-rare">
+                                    <td>Сверхредкий</td>
+                                    <td><span class="badge super-rare-badge">Синий</span></td>
+                                    <td>25%</td>
+                                    <td>25%</td>
+                                    <td>+5 🪙</td>
+                                </tr>
+                                <tr class="rate-epic">
+                                    <td>Эпик</td>
+                                    <td><span class="badge epic-badge">Фиолетовый</span></td>
+                                    <td>14%</td>
+                                    <td>25%</td>
+                                    <td>+8 🪙</td>
+                                </tr>
+                                <tr class="rate-mythic">
+                                    <td>Мифик</td>
+                                    <td><span class="badge mythic-badge">Красный</span></td>
+                                    <td>7%</td>
+                                    <td>20%</td>
+                                    <td>+10 🪙</td>
+                                </tr>
+                                <tr class="rate-legendary">
+                                    <td>Легенда</td>
+                                    <td><span class="badge legendary-badge">Желтый</span></td>
+                                    <td>3.5%</td>
+                                    <td>12%</td>
+                                    <td>+15 🪙</td>
+                                </tr>
+                                <tr class="rate-ultra-legendary">
+                                    <td>Ультра Лега</td>
+                                    <td><span class="badge ultra-legendary-badge">Радуга</span></td>
+                                    <td>0.5%</td>
+                                    <td>3.0%</td>
+                                    <td>+100 🪙</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- SOUND TOGGLE (MUTE/UNMUTE) -->
+        <div class="sound-toggle-container">
+            <button id="sound-toggle-btn" class="sound-btn">
+                🔊 Включить Звук (Использует синтезатор)
+            </button>
+        </div>
+
+        <footer class="game-footer">
+            <p>© 2026 Badalyan's Grandma RNG. Все права вонюче защищены.</p>
+        </footer>
+
+    </div>
+
+    <!-- OPENING ANIMATION OVERLAY -->
+    <div id="opening-overlay" class="overlay hidden">
+        <div class="opening-animation-container">
+            <!-- Box shaking (CSS cardboard-box wrapper) -->
+            <div id="animating-box-wrapper" class="animating-box-wrapper">
+                <div id="animating-box" class="cardboard-box normal-box animating-box">
+                    <div class="box-tape"></div>
+                    <div class="box-label">📦</div>
+                </div>
+            </div>
+            
+            <!-- Screen flash layer -->
+            <div id="flash-effect" class="flash-layer"></div>
+            
+            <!-- Card Reveal Container -->
+            <div id="card-reveal-container" class="card-reveal hidden">
+                <div id="revealed-card-wrapper" class="card-wrapper">
+                    <!-- Dynamic Card Content goes here -->
+                </div>
+                
+                <p id="reveal-duplicate-notice" class="duplicate-notice hidden">
+                    ⚠️ Дубликат! Автоматически продан за <span id="sold-coins-count">2</span> 🪙
+                </p>
+                <button id="claim-btn" class="btn btn-claim">ЗАБРАТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=6"></script>
+</body>
+</html>
