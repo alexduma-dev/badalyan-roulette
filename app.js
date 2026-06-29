@@ -541,6 +541,89 @@ function rollGacha(chestType) {
 }
 
 // ROLL / OPENING FLOW
+// Opening animation states and timeout references
+let isOpeningAnimation = false;
+let currentRolledCard = null;
+let activeTimeouts = {
+    shake: null,
+    flash: null,
+    reveal: null
+};
+
+function skipOpeningAnimation() {
+    if (!isOpeningAnimation || !currentRolledCard) return;
+    
+    // 1. Clear active timeouts
+    if (activeTimeouts.shake) clearTimeout(activeTimeouts.shake);
+    if (activeTimeouts.flash) clearTimeout(activeTimeouts.flash);
+    if (activeTimeouts.reveal) clearTimeout(activeTimeouts.reveal);
+    
+    // 2. Stop and hide animating box and wrapper
+    animatingBox.classList.remove("shake");
+    animatingBox.classList.add("hide");
+    animatingBox.parentElement.style.display = "none";
+    
+    // 3. Clear flash
+    flashEffect.classList.remove("flash");
+    
+    // 4. Render card immediately
+    renderRevealedCard(currentRolledCard);
+    
+    // 5. Reset flag
+    isOpeningAnimation = false;
+}
+
+function renderRevealedCard(card) {
+    const isDuplicate = Array.isArray(state.collectedCards) && state.collectedCards.includes(card.id);
+    
+    // Update state based on duplicate or new card
+    if (isDuplicate) {
+        state.coins += card.sellValue;
+        revealDuplicateNotice.classList.remove("hidden");
+        soldCoinsCountEl.textContent = card.sellValue;
+    } else {
+        state.collectedCards.push(card.id);
+        revealDuplicateNotice.classList.add("hidden");
+    }
+    
+    // Save and update GUI behind modal
+    saveGame();
+    updateUI();
+    
+    // Render card preview in modal
+    revealedCardWrapper.innerHTML = "";
+    const revealedCard = document.createElement("div");
+    revealedCard.className = `game-card ${card.rarity}`;
+    
+    revealedCard.innerHTML = `
+        <span class="card-rarity-tag">${card.rarityText}</span>
+        <div class="card-img-container">
+            <img src="${card.image}" alt="${card.name}" class="card-art">
+        </div>
+        <div class="card-name">${card.name}</div>
+        <div class="card-coins-val">
+            <span>Дубликат:</span>
+            <span>🪙 ${card.sellValue}</span>
+        </div>
+    `;
+    revealedCardWrapper.appendChild(revealedCard);
+    
+    // Rarity text style
+    if (revealCardTitle) revealCardTitle.textContent = card.name;
+    if (revealCardRarity) {
+        revealCardRarity.textContent = card.rarityText;
+        revealCardRarity.className = `rarity-text ${card.rarity}-text`;
+    }
+    
+    // Play fanfare sound based on rarity
+    const isLeg = card.rarity === 'legendary' || card.rarity === 'ultra-legendary';
+    SoundFX.playFanfare(isLeg);
+    
+    // Display card reveal block
+    cardRevealContainer.classList.remove("hidden");
+}
+
+// ROLL / OPENING FLOW
 function openChest(chestType) {
     const cost = chestType === 'ordinary' ? 10 : 50;
     if (state.coins < cost) {
@@ -548,6 +631,10 @@ function openChest(chestType) {
     }
     
     initAudio();
+    
+    // Roll card immediately at start to support skip
+    currentRolledCard = rollGacha(chestType);
+    isOpeningAnimation = true;
     
     // Deduct coins
     state.coins -= cost;
@@ -584,12 +671,12 @@ function openChest(chestType) {
     
     // Shake sound loops or triggers twice
     SoundFX.playShake();
-    setTimeout(() => {
+    activeTimeouts.shake = setTimeout(() => {
         SoundFX.playShake();
     }, 300);
     
     // Step 2: Stop shake, trigger bright full-screen flash (0.5s duration)
-    setTimeout(() => {
+    activeTimeouts.flash = setTimeout(() => {
         animatingBox.classList.remove("shake");
         animatingBox.classList.add("hide");
         animatingBoxWrapper.style.display = "none"; // Hide wrapper (removes background)
@@ -599,58 +686,9 @@ function openChest(chestType) {
     }, 800);
     
     // Step 3: Flash clears, reveal the card
-    setTimeout(() => {
-        // Determine rolled card
-        const card = rollGacha(chestType);
-        const isDuplicate = Array.isArray(state.collectedCards) && state.collectedCards.includes(card.id);
-        
-        // Update state based on duplicate or new card
-        if (isDuplicate) {
-            state.coins += card.sellValue;
-            // Show duplicate text
-            revealDuplicateNotice.classList.remove("hidden");
-            soldCoinsCountEl.textContent = card.sellValue;
-        } else {
-            state.collectedCards.push(card.id);
-            revealDuplicateNotice.classList.add("hidden");
-        }
-        
-        // Save and update GUI behind modal
-        saveGame();
-        updateUI();
-        
-        // Render card preview in modal
-        revealedCardWrapper.innerHTML = "";
-        const revealedCard = document.createElement("div");
-        revealedCard.className = `game-card ${card.rarity}`;
-        
-        revealedCard.innerHTML = `
-            <span class="card-rarity-tag">${card.rarityText}</span>
-            <div class="card-img-container">
-                <img src="${card.image}" alt="${card.name}" class="card-art">
-            </div>
-            <div class="card-name">${card.name}</div>
-            <div class="card-coins-val">
-                <span>Дубликат:</span>
-                <span>🪙 ${card.sellValue}</span>
-            </div>
-        `;
-        revealedCardWrapper.appendChild(revealedCard);
-        
-        // Rarity text style
-        if (revealCardTitle) revealCardTitle.textContent = card.name;
-        if (revealCardRarity) {
-            revealCardRarity.textContent = card.rarityText;
-            revealCardRarity.className = `rarity-text ${card.rarity}-text`;
-        }
-        
-        // Play fanfare sound based on rarity
-        const isLeg = card.rarity === 'legendary' || card.rarity === 'ultra-legendary';
-        SoundFX.playFanfare(isLeg);
-        
-        // Display card reveal block
-        cardRevealContainer.classList.remove("hidden");
-        
+    activeTimeouts.reveal = setTimeout(() => {
+        renderRevealedCard(currentRolledCard);
+        isOpeningAnimation = false;
     }, 1300); // 0.8s shake + 0.5s flash
 }
 
@@ -662,9 +700,19 @@ if (rollLuckyBtn) {
     rollLuckyBtn.addEventListener("click", () => openChest("lucky"));
 }
 
+// SKIP ANIMATION EVENT (CLICK ANYWHERE ON SCREEN)
+if (openingOverlay) {
+    openingOverlay.addEventListener("click", (e) => {
+        if (isOpeningAnimation && e.target !== claimBtn) {
+            skipOpeningAnimation();
+        }
+    });
+}
+
 // CLAIM CARD (CLOSE OVERLAY)
 if (claimBtn && openingOverlay) {
-    claimBtn.addEventListener("click", () => {
+    claimBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent triggering overlay click
         SoundFX.playClick();
         openingOverlay.classList.add("hidden");
     });
